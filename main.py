@@ -1,5 +1,4 @@
 import requests, json
-import PySide6.QtCore
 import sys
 from PySide6 import QtCore, QtWidgets, QtGui
 import csv 

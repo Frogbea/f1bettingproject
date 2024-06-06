@@ -1,20 +1,42 @@
 # USERNAME and password component
 #**********IMPORTS***************
-import csv
+import csv, pandas as p
 
 #********VARIBLES****************
-username = 'blank'
-password = 'blank'
+
 
 #*************FUNCTIONS*************
 def newUser():
+    global username
     username = input('Please enter a username:')
-    password = input('Please create a password')
+    while True:
+        password = input('Please create a password:')
+        password2 = input('Please retype your password:')
+        if password != password2:
+            print('!ERROR! passwords do not match')
+            continue
+        else:
+            break
+    with open('users.csv', 'a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([username, password])
 
 def previousUser():
-    print('sign in')
+    while True:
 
-
+        username = input('Please enter your username:')
+        password = input('Please enter your password:')
+        data = []
+        with open('users.csv') as file:
+            check = csv.reader(file)
+            for row in check:
+                data.append(row)
+        col = [x[0] for x in data]
+        if username in col and password in col:
+            print('Welcome back ', username)
+            break
+        else:
+            print('!ERROR!User not found')
 
 
 # MAIN***************************************************************************************************
@@ -25,23 +47,9 @@ while True:
         break
     elif choice == 'sign up':
         newUser()
+        print('Welcome to the program ', username, ' hope you enjoy!!')
         break
     else:
         print('!ERROR! Please type in your command correctly.')
-   
 
-with open('users.csv', 'r') as file:
-  csvreader = csv.reader(file)
-  for row in csvreader:
-    print(row)
-
-    
-
-with open('users.csv', 'w', newline='') as file:
-    writer = csv.writer(file)
-    
-    writer.writerow(["SNo", "Name", "Subject"])
-    writer.writerow([1, "Ash Ketchum", "English"])
-    writer.writerow([2, "Gary Oak", "Mathematics"])
-    writer.writerow([3, "Brock Lesner", "Physics"])
 
