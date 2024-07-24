@@ -26,17 +26,22 @@ def previousUser():
 
         username = input('Please enter your username:')
         password = input('Please enter your password:')
-        data = []
-        with open('users.csv') as file:
-            check = csv.reader(file)
-            for row in check:
-                data.append(row)
-        col = [x[0] for x in data]
-        if username in col and password in col:
+        # reading CSV file
+        data = p.read_csv('users.csv')
+        
+        # converting column data to list
+        user = data['USERNAME'].tolist()
+        passw = data['Col 2'].tolist()
+        # printing list data
+        print('Facecream:', user)
+        print('Facewash:', passw)
+        if username in user and password in passw:
             print('Welcome back ', username)
             break
         else:
             print('!ERROR!User not found')
+
+
 
 
 # MAIN***************************************************************************************************
@@ -52,4 +57,6 @@ while True:
     else:
         print('!ERROR! Please type in your command correctly.')
 
+data = p.read_csv('users.csv')
+print(data)
 
