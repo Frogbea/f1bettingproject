@@ -12,6 +12,30 @@ startEC = 15
 
 
 #CLASSES************* ********************************************************************************
+class StateManager:
+    _instance = None
+
+    @staticmethod
+    def getInstance():
+        """ Static access method. """
+        if StateManager._instance == None:
+            StateManager()
+        return StateManager._instance
+
+    def __init__(self):
+        """ Virtually private constructor. """
+        if StateManager._instance != None:
+            raise Exception("This class is a singleton!")
+        else:
+            StateManager._instance = self
+            self.currentEC = 0
+
+    def setCurrentEC(self, value):
+        self.currentEC = value
+
+    def getCurrentEC(self):
+        return self.currentEC
+
 class Welcomepage(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
@@ -113,10 +137,11 @@ class signIn(QMainWindow):
                         userFound.setText('Welcome back ' + username + '!')
                         userFound.setStandardButtons(QMessageBox.Ok)
                         userFound.setIcon(QMessageBox.Information)
-                        self.currentEC = row[2]
+                        currentEC = row[2]
                         goToHome = userFound.exec()
                         test1 = True
                         if goToHome == QMessageBox.Ok:
+                            StateManager.getInstance().setCurrentEC(currentEC)
                             self.changetohome()
                 if test1:
                     print(self.currentEC)
@@ -204,10 +229,12 @@ class homePage(QMainWindow):
         QMainWindow.__init__(self)
         # initial set up
         self.layout = QGridLayout()
+        current_value = StateManager.getInstance().getCurrentEC()
+
 
         homeinstruc = QLabel('Pick a team:')
 
-        displayCurrent = QLabel('Current Emily Coins: ' + str(currentEC))
+        displayCurrent = QLabel('Current Emily Coins: ' + str(current_value))
 
         # images set up
         redbull = QLabel(self)

@@ -9,6 +9,7 @@ import requests, json
 
 #Varibles ****************************************************************************************
 startEC = 15
+currentEC = 0
 
 
 #CLASSES************* ********************************************************************************
@@ -62,8 +63,6 @@ class Welcomepage(QMainWindow):
 class signIn(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
-        global currentEC
-        currentEC = 0
         self.previousUser()
 
     # previous user layout
@@ -95,11 +94,15 @@ class signIn(QMainWindow):
         self.setCentralWidget(widget)
     # function for user sign in
     def signin(self):
+        global currentEC
         username = self.user.text()
         password = self.passw.text()
+        currentEC = 0
+        # checking username and password entered
         if username == '' or password == '':
             QMessageBox.warning(self, 'ERROR', 'Please enter a username and password!', QMessageBox.Ok, QMessageBox.Ok)
         else:
+            # testing username and password are correct
             test1 = False
             file = open('users.csv')
             colu = 0
@@ -113,18 +116,17 @@ class signIn(QMainWindow):
                         userFound.setText('Welcome back ' + username + '!')
                         userFound.setStandardButtons(QMessageBox.Ok)
                         userFound.setIcon(QMessageBox.Information)
-                        self.currentEC = row[2]
+                        currentEC = row[2]
                         goToHome = userFound.exec()
                         test1 = True
                         if goToHome == QMessageBox.Ok:
                             self.changetohome()
                 if test1:
-                    print(self.currentEC)
+                    print(currentEC)
                     break; 
                 else:
                     QMessageBox.critical(self, 'ERROR', 'User not found. Please re-enter details or sign up instead', QMessageBox.Ok, QMessageBox.Ok)
                     break;
-        return self.currentEC
     # change back to welcome page
     def changeTowelcome(self):
         widget.setCurrentWidget(welcome)
@@ -139,19 +141,24 @@ class signUp(QMainWindow):
     def newUser(self):
         # create username text box
         self.createuser = QLineEdit(self)
+
         #  create password text box
         self.createpassw = QLineEdit(self)
         self.createpassw.setEchoMode(QLineEdit.EchoMode.Password)
+
         #  check password text box
         self.checkpassw = QLineEdit(self)
         self.checkpassw.setEchoMode(QLineEdit.EchoMode.Password)
+
         # sign up button
         self.create = QPushButton('Sign up', self)
         self.create.setStyleSheet('background-image: url(f1signup.png)')
         self.create.clicked.connect(self.signupp)
+
         # back button 
         self.upback = QPushButton('Return to welcome page', self)
         self.upback.clicked.connect(self.changetowelcome)
+
         # layout setup
         layout = QFormLayout()
         layout.addRow('Please create a username:', self.createuser)
@@ -161,15 +168,18 @@ class signUp(QMainWindow):
         widget = QWidget()
         widget.setLayout(layout)
         self.setCentralWidget(widget)
+
     # code to sign user up
     def signupp(self):
         username = self.createuser.text()
         password = self.createpassw.text()
         password2 = self.checkpassw.text()
         emilycoins = startEC
+        # check usernmae/password is entered
         if username == '' or password == '' or password2 == '':
             QMessageBox.warning(self, 'ERROR', 'Please create username and password!', QMessageBox.Ok, QMessageBox.Ok)
         else:
+            # check passwords match
             if password != password2:
                 # password's do not match dialog box
                 noMatch = QMessageBox(self)
@@ -202,6 +212,7 @@ class signUp(QMainWindow):
 class homePage(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
+        global currentEC
         # initial set up
         self.layout = QGridLayout()
 
@@ -334,32 +345,33 @@ class RedBull(QMainWindow):
 
 
 # MAIN *******************************************************************************************************************************
-app = QApplication(sys.argv)
-widget = QtWidgets.QStackedWidget()
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    widget = QtWidgets.QStackedWidget()
 
-# create welcome page instance
-welcome = Welcomepage()
-widget.addWidget(welcome)
+    # create welcome page instance
+    welcome = Welcomepage()
+    widget.addWidget(welcome)
 
-# create sign in page instance
-signin = signIn() 
-widget.addWidget(signin) 
+    # create sign in page instance
+    signin = signIn() 
+    widget.addWidget(signin) 
 
-# create sign up page instance
-signup = signUp()
-widget.addWidget(signup)
+    # create sign up page instance
+    signup = signUp()
+    widget.addWidget(signup)
 
-# create home page instance
-homepage = homePage()
-widget.addWidget(homepage)
+    # create home page instance
+    homepage = homePage()
+    widget.addWidget(homepage)
 
-# create redbull page instance
-redbull = RedBull()
-widget.addWidget(redbull)
+    # create redbull page instance
+    redbull = RedBull()
+    widget.addWidget(redbull)
 
-# showing and starting widgets
-widget.setCurrentWidget(welcome)  
-widget.setWindowTitle('F1 betting system')
-widget.resize(500, 900)
-widget.show()
-app.exec()
+    # showing and starting widgets
+    widget.setCurrentWidget(welcome)  
+    widget.setWindowTitle('F1 betting system')
+    widget.resize(500, 900)
+    widget.show()
+    app.exec()
