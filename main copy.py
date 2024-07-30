@@ -9,8 +9,39 @@ import requests, json
 
 #Varibles ****************************************************************************************
 startEC = 15
+currentEC = 0
 
-
+def signin(self):
+    global currentEC
+    username = self.user.text()
+    password = self.passw.text()
+    if username == '' or password == '':
+        QMessageBox.warning(self, 'ERROR', 'Please enter a username and password!', QMessageBox.Ok, QMessageBox.Ok)
+    else:
+        test1 = False
+        file = open('users.csv')
+        colu = 0
+        colp = 1
+        while True:
+            for row in csv.reader(file):
+                if row[colu] == username and row[colp] == password:
+                # dialog box to take user to home page
+                    userFound = QMessageBox(self)
+                    userFound.setWindowTitle('Successful')
+                    userFound.setText('Welcome back ' + username + '!')
+                    userFound.setStandardButtons(QMessageBox.Ok)
+                    userFound.setIcon(QMessageBox.Information)
+                    currentEC = row[2]
+                    goToHome = userFound.exec()
+                    test1 = True
+                    if goToHome == QMessageBox.Ok:
+                        self.changetohome()
+            if test1:
+                print(currentEC)
+                break; 
+            else:
+                QMessageBox.critical(self, 'ERROR', 'User not found. Please re-enter details or sign up instead', QMessageBox.Ok, QMessageBox.Ok)
+                break;
 #CLASSES************* ********************************************************************************
 class Welcomepage(QMainWindow):
     def __init__(self):
@@ -79,7 +110,7 @@ class signIn(QMainWindow):
 
         # sign in button
         self.confirm = QPushButton('Sign in', self)
-        self.confirm.clicked.connect(self.signin)
+        self.confirm.clicked.connect(signin(self))
 
         # back button
         self.inback = QPushButton('Return to welcome page', self)
@@ -93,38 +124,6 @@ class signIn(QMainWindow):
         widget = QWidget()
         widget.setLayout(layout)
         self.setCentralWidget(widget)
-    # function for user sign in
-    def signin(self):
-        username = self.user.text()
-        password = self.passw.text()
-        if username == '' or password == '':
-            QMessageBox.warning(self, 'ERROR', 'Please enter a username and password!', QMessageBox.Ok, QMessageBox.Ok)
-        else:
-            test1 = False
-            file = open('users.csv')
-            colu = 0
-            colp = 1
-            while True:
-                for row in csv.reader(file):
-                    if row[colu] == username and row[colp] == password:
-                    # dialog box to take user to home page
-                        userFound = QMessageBox(self)
-                        userFound.setWindowTitle('Successful')
-                        userFound.setText('Welcome back ' + username + '!')
-                        userFound.setStandardButtons(QMessageBox.Ok)
-                        userFound.setIcon(QMessageBox.Information)
-                        self.currentEC = row[2]
-                        goToHome = userFound.exec()
-                        test1 = True
-                        if goToHome == QMessageBox.Ok:
-                            self.changetohome()
-                if test1:
-                    print(self.currentEC)
-                    break; 
-                else:
-                    QMessageBox.critical(self, 'ERROR', 'User not found. Please re-enter details or sign up instead', QMessageBox.Ok, QMessageBox.Ok)
-                    break;
-        return self.currentEC
     # change back to welcome page
     def changeTowelcome(self):
         widget.setCurrentWidget(welcome)
