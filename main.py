@@ -9,7 +9,6 @@ import requests, json
 
 #Varibles ****************************************************************************************
 startEC = 15
-currentEC = 0
 
 
 #CLASSES************* ********************************************************************************
@@ -60,13 +59,22 @@ class Welcomepage(QMainWindow):
     def usersignupchange(self):
         widget.setCurrentWidget(signup)
 
+class UserData:
+    def __init__(self):
+        self.pls = 10
+    def get_pls (self):
+        return self.pls
+    
+    def setPls(self, value):
+        self.pls = value
+        return self.pls
+
 class signIn(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
-        self.previousUser()
+        
+        self.userData = UserData()
 
-    # previous user layout
-    def previousUser(self):
         # username text box
         self.user = QLineEdit(self)
         user = QLabel('Please enter your username:')
@@ -92,12 +100,11 @@ class signIn(QMainWindow):
         widget = QWidget()
         widget.setLayout(layout)
         self.setCentralWidget(widget)
+        
     # function for user sign in
     def signin(self):
-        global currentEC
         username = self.user.text()
         password = self.passw.text()
-        currentEC = 0
         # checking username and password entered
         if username == '' or password == '':
             QMessageBox.warning(self, 'ERROR', 'Please enter a username and password!', QMessageBox.Ok, QMessageBox.Ok)
@@ -116,13 +123,12 @@ class signIn(QMainWindow):
                         userFound.setText('Welcome back ' + username + '!')
                         userFound.setStandardButtons(QMessageBox.Ok)
                         userFound.setIcon(QMessageBox.Information)
-                        currentEC = row[2]
+                        self.userData.setPls(row[2])
                         goToHome = userFound.exec()
                         test1 = True
                         if goToHome == QMessageBox.Ok:
                             self.changetohome()
                 if test1:
-                    print(currentEC)
                     break; 
                 else:
                     QMessageBox.critical(self, 'ERROR', 'User not found. Please re-enter details or sign up instead', QMessageBox.Ok, QMessageBox.Ok)
@@ -212,13 +218,13 @@ class signUp(QMainWindow):
 class homePage(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
-        global currentEC
         # initial set up
+        self.userData = UserData()
         self.layout = QGridLayout()
 
         homeinstruc = QLabel('Pick a team:')
 
-        displayCurrent = QLabel('Current Emily Coins: ' + str(currentEC))
+        displayCurrent = QLabel('Current Emily Coins: ' + str(self.userData.get_pls()))
 
         # images set up
         redbull = QLabel(self)
@@ -338,10 +344,13 @@ class homePage(QMainWindow):
     def changered(self):
         widget.setCurrentWidget(redbull)
 
-
 class RedBull(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
+
+        response = requests.get('http://ergast.com/api/f1/current/constructorStandings/red_bull.json') 
+        
+        
 
 
 # MAIN *******************************************************************************************************************************
